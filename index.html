@@ -158,9 +158,6 @@
       border: 1px solid var(--stroke);
       border-radius: var(--radius);
       padding: 12px;
-        min-height: 330px;
-
-
     }
 
     /* Product choice grid */
@@ -367,7 +364,9 @@
       justify-content:center;
       flex-wrap: wrap;
       margin-top: 4px;
+      width: 100%;
     }
+
     .logoCard{
       width: 120px;
       height: 120px;
@@ -379,7 +378,19 @@
       color: #6b6f70;
       font-weight: 800;
       letter-spacing: .04em;
+      overflow: hidden; /* ensures image never spills outside the card */
     }
+
+    /* FIX: keep Rufus image contained inside the card */
+    #rufusIcon{
+      background-image: url("assets/rufus-icon.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-width: unset;
+      min-height: unset;
+    }
+
     .logoNote{
       text-align:center;
       font-size: 12px;
@@ -388,23 +399,18 @@
       margin-top: 6px;
     }
 
-    
     .img, .heroImg, .logoCard{
       background-size: cover;
       background-position: center;
+      background-repeat: no-repeat;
     }
-    
+
     #imgA { background-image: url("assets/product-a.jpg"); }
     #imgB { background-image: url("assets/product-b.jpg"); }
     #blanket { background-image: url("assets/blanket.jpg"); }
     #headphones { background-image: url("assets/headphones.jpg"); }
 
-    #rufusIcon { background-image: url("assets/rufus-icon.jpg"); 
-    min-width: 100%;
-    min-height: 200%;
-}
     #amazonLogo { background-image: url("assets/amazon-logo.jpg"); }
-   
 
     @keyframes fade{
       from{ opacity:0; transform: translateY(6px); }
@@ -442,8 +448,7 @@
         <div class="card">
           <div class="grid">
             <div class="product">
-              <div class="img" id="imgA">
-              </div>
+              <div class="img" id="imgA"></div>
               <div class="meta">
                 <div class="name">Product A</div>
                 <div class="spec">Great ratings… but what does “performance” mean here?</div>
@@ -451,8 +456,7 @@
             </div>
 
             <div class="product">
-              <div class="img" id="imgB">
-              </div>
+              <div class="img" id="imgB"></div>
               <div class="meta">
                 <div class="name">Product B</div>
                 <div class="spec">Same price range… different brand… confusing.</div>
@@ -476,7 +480,7 @@
         <h1>Can this blanket go in the dryer?</h1>
 
         <div class="heroImg" id="blanket">
-        <div class="heroLabel"></div>
+          <div class="heroLabel"></div>
         </div>
 
         <div class="card">
@@ -489,8 +493,7 @@
           </div>
         </div>
 
-        <div class="mini">
-        </div>
+        <div class="mini"></div>
       </section>
 
       <!-- PAGE 3 -->
@@ -498,9 +501,7 @@
         <p class="hint">Now: conversational shopping instead of endless scrolling.</p>
         <h1>Can I find you amazing headphones under $50 — with the features you need?</h1>
 
-        <div class="heroImg" id="headphones">
-          
-        </div>
+        <div class="heroImg" id="headphones"></div>
 
         <div class="card">
           <p class="hint" style="margin:0;">
@@ -511,7 +512,6 @@
             <a class="btn" href="#p4">Yes!</a>
           </div>
         </div>
-
       </section>
 
       <!-- PAGE 4 (FINAL) -->
@@ -526,14 +526,12 @@
             </p>
 
             <div class="iconRow">
-              <div class="logoCard" id="rufusIcon" aria-label="Rufus icon">
-              </div>
+              <div class="logoCard" id="rufusIcon" aria-label="Rufus icon"></div>
             </div>
           </div>
         </div>
 
-        <div class="mini">
-        </div>
+        <div class="mini"></div>
       </section>
 
       <div class="footer">
