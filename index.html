@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rufus Mini Interaction</title>
+
+  <style>
+    :root{
+      --bg: #0f1111;           
+      --panel: #141919;         
+      --card: #ffffff;         
+      --text: #111;             
+      --muted: #565959;        
+      --stroke: #d5d9d9;        
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+
+      --brand: #ff9900;         
+      --brand2:#232f3e;        
+      --cta: #ffd814;          
+      --ctaBorder: #fcd200;
+      --ctaHover: #f7ca00;
+
+      --radius: 16px;
+      --max: 430px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+
+    body{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(180deg, #0b0d0d 0%, var(--bg) 35%, #0b0d0d 100%);
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    /* Phone frame */
+    .phone{
+      width: min(var(--max), 100%);
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.08);
+      background: #0b0d0d;
+    }
+
+    /* Top bar */
+    .topbar{
+      background: var(--brand2);
+      color: #fff;
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .topLeft{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .rufusBadge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      white-space: nowrap;
+    }
+    .smile{
+      width: 18px; height: 3px;
+      border-radius: 999px;
+      background: var(--brand);
+      display:inline-block;
+      transform: skewX(-10deg);
+    }
+    .subtitle{
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+    .signal{
+      display:flex; gap: 6px; align-items:center;
+      opacity: .9;
+    }
+    .bar{ width: 6px; border-radius: 2px; background: rgba(255,255,255,.65); }
+    .b1{ height: 6px; opacity:.45;}
+    .b2{ height: 9px; opacity:.60;}
+    .b3{ height: 12px; opacity:.80;}
+    .b4{ height: 15px; opacity:1;}
+
+    /* Pages container */
+    .pages{
+      background: #ececec; 
+      min-height: 640px;
+      position: relative;
+      padding-bottom: 64px; 
+    }
+
+    .page{
+      display:none;
+      padding: 16px 14px 18px;
+      animation: fade .22s ease;
+    }
+    #page1{ display:block; }
+
+    /* :target navigation */
+    #p1:target ~ .phone .pages #page1{ display:block; }
+    #p1:target ~ .phone .pages #page2,
+    #p1:target ~ .phone .pages #page3,
+    #p1:target ~ .phone .pages #page4{ display:none; }
+
+    #p2:target ~ .phone .pages #page2{ display:block; }
+    #p2:target ~ .phone .pages #page1,
+    #p2:target ~ .phone .pages #page3,
+    #p2:target ~ .phone .pages #page4{ display:none; }
+
+    #p3:target ~ .phone .pages #page3{ display:block; }
+    #p3:target ~ .phone .pages #page1,
+    #p3:target ~ .phone .pages #page2,
+    #p3:target ~ .phone .pages #page4{ display:none; }
+
+    #p4:target ~ .phone .pages #page4{ display:block; }
+    #p4:target ~ .phone .pages #page1,
+    #p4:target ~ .phone .pages #page2,
+    #p4:target ~ .phone .pages #page3{ display:none; }
+
+    .hint{
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.35;
+    }
+
+    h1{
+      margin: 6px 0 12px;
+      font-size: 20px;
+      line-height: 1.15;
+      color: #0f1111;
+      letter-spacing: -0.01em;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 12px;
+        min-height: 330px;
+
+
+    }
+
+    /* Product choice grid */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .product{
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+      display:flex;
+      flex-direction: column;
+      min-height: 200px;
+    }
+
+    .img{
+      height: 126px;
+      width: 100%;
+      background: #f7fafa;
+      border-bottom: 1px solid var(--stroke);
+      position: relative;
+      display:grid;
+      place-items:center;
+      color: #6b6f70;
+      font-size: 12px;
+    }
+
+    /* Amazon-like “similar” tag */
+    .tag{
+      position:absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255,153,0,.14);
+      border: 1px solid rgba(255,153,0,.45);
+      color: #7a3f00;
+      padding: 5px 8px;
+      border-radius: 999px;
+    }
+
+    .meta{
+      padding: 10px 10px 12px;
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .name{
+      font-weight: 750;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .spec{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    /* “Question image” */
+    .heroImg{
+      height: 240px;
+      border-radius: 14px;
+      background: #f7fafa;
+      border: 1px solid var(--stroke);
+      display:grid;
+      place-items:center;
+      color: #6b6f70;
+      margin: 8px 0 12px;
+      position: relative;
+      overflow:hidden;
+    }
+
+    .heroLabel{
+      position:absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(15,17,17,.08);
+      border: 1px solid rgba(15,17,17,.14);
+      color: #2b2f2f;
+      padding: 6px 8px;
+      border-radius: 10px;
+    }
+
+    /* CTA (Amazon vibe) */
+    .ctaWrap{
+      margin-top: 12px;
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    a.btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      color: #0f1111;
+      background: var(--cta);
+      border: 1px solid var(--ctaBorder);
+      border-radius: 12px;
+      padding: 14px 14px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      box-shadow: 0 2px 0 rgba(0,0,0,.12);
+      -webkit-tap-highlight-color: transparent;
+      transition: filter .15s ease, transform .08s ease, background .15s ease;
+    }
+    a.btn:hover{ background: var(--ctaHover); }
+    a.btn:active{ transform: scale(.985); }
+
+    .mini{
+      text-align:center;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    /* Footer */
+    .footer{
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid var(--stroke);
+      padding: 10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .progress{
+      display:flex;
+      align-items:center;
+      gap: 6px;
+    }
+
+    .pill{
+      font-size: 12px;
+      color: #0f1111;
+      border: 1px solid var(--stroke);
+      background: #fff;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      opacity: .35;
+    }
+
+    /* active progress based on target (4 steps) */
+    .p1{ opacity: 1; }
+    #p1:target ~ .phone .footer .p1{ opacity: 1; }
+    #p1:target ~ .phone .footer .p2,
+    #p1:target ~ .phone .footer .p3,
+    #p1:target ~ .phone .footer .p4{ opacity: .35; }
+
+    #p2:target ~ .phone .footer .p2{ opacity: 1; }
+    #p2:target ~ .phone .footer .p1,
+    #p2:target ~ .phone .footer .p3,
+    #p2:target ~ .phone .footer .p4{ opacity: .35; }
+
+    #p3:target ~ .phone .footer .p3{ opacity: 1; }
+    #p3:target ~ .phone .footer .p1,
+    #p3:target ~ .phone .footer .p2,
+    #p3:target ~ .phone .footer .p4{ opacity: .35; }
+
+    #p4:target ~ .phone .footer .p4{ opacity: 1; }
+    #p4:target ~ .phone .footer .p1,
+    #p4:target ~ .phone .footer .p2,
+    #p4:target ~ .phone .footer .p3{ opacity: .35; }
+
+    .footNote{
+      font-size: 12px;
+      color: #0f1111;
+      font-weight: 700;
+      border: 1px solid rgba(255,153,0,.35);
+      background: rgba(255,153,0,.10);
+      padding: 7px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* Final page visuals */
+    .meetWrap{
+      display:grid;
+      gap: 12px;
+      padding: 10px 0 0;
+    }
+    .iconRow{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .logoCard{
+      width: 120px;
+      height: 120px;
+      border-radius: 22px;
+      border: 1px solid var(--stroke);
+      background: #f7fafa;
+      display:grid;
+      place-items:center;
+      color: #6b6f70;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    .logoNote{
+      text-align:center;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+      margin-top: 6px;
+    }
+
+    
+    .img, .heroImg, .logoCard{
+      background-size: cover;
+      background-position: center;
+    }
+    
+    #imgA { background-image: url("assets/product-a.jpg"); }
+    #imgB { background-image: url("assets/product-b.jpg"); }
+    #blanket { background-image: url("assets/blanket.jpg"); }
+    #headphones { background-image: url("assets/headphones.jpg"); }
+
+    #rufusIcon { background-image: url("assets/rufus-icon.jpg"); 
+    min-width: 100%;
+    min-height: 200%;
+}
+    #amazonLogo { background-image: url("assets/amazon-logo.jpg"); }
+   
+
+    @keyframes fade{
+      from{ opacity:0; transform: translateY(6px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- anchors for :target -->
+  <a id="p1"></a>
+  <a id="p2"></a>
+  <a id="p3"></a>
+  <a id="p4"></a>
+
+  <div class="phone" role="application" aria-label="Rufus interaction mini app">
+    <div class="topbar">
+      <div class="topLeft">
+        <div class="rufusBadge">
+          RUFUS <span class="smile" aria-hidden="true"></span>
+        </div>
+        <div class="subtitle">Tap through the shopping doubts</div>
+      </div>
+      <div class="signal" aria-hidden="true">
+        <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div><div class="bar b4"></div>
+      </div>
+    </div>
+
+    <div class="pages">
+      <!-- PAGE 1 -->
+      <section class="page" id="page1">
+        <p class="hint">Decision stress: two similar items, unclear performance.</p>
+        <h1>Two similar products… which one performs better?</h1>
+
+        <div class="card">
+          <div class="grid">
+            <div class="product">
+              <div class="img" id="imgA">
+              </div>
+              <div class="meta">
+                <div class="name">Product A</div>
+                <div class="spec">Great ratings… but what does “performance” mean here?</div>
+              </div>
+            </div>
+
+            <div class="product">
+              <div class="img" id="imgB">
+              </div>
+              <div class="meta">
+                <div class="name">Product B</div>
+                <div class="spec">Same price range… different brand… confusing.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctaWrap">
+            <a class="btn" href="#p2">I don’t know</a>
+          </div>
+        </div>
+
+        <div class="mini">
+          This is where shoppers pause, overthink… or abandon.
+        </div>
+      </section>
+
+      <!-- PAGE 2 -->
+      <section class="page" id="page2">
+        <p class="hint">Small doubt → huge blocker in real purchases.</p>
+        <h1>Can this blanket go in the dryer?</h1>
+
+        <div class="heroImg" id="blanket">
+        <div class="heroLabel"></div>
+        </div>
+
+        <div class="card">
+          <p class="hint" style="margin:0;">
+            If the answer isn’t clear, people often don’t risk it.
+          </p>
+
+          <div class="ctaWrap">
+            <a class="btn" href="#p3">I have no idea!</a>
+          </div>
+        </div>
+
+        <div class="mini">
+        </div>
+      </section>
+
+      <!-- PAGE 3 -->
+      <section class="page" id="page3">
+        <p class="hint">Now: conversational shopping instead of endless scrolling.</p>
+        <h1>Can I find you amazing headphones under $50 — with the features you need?</h1>
+
+        <div class="heroImg" id="headphones">
+          
+        </div>
+
+        <div class="card">
+          <p class="hint" style="margin:0;">
+            This is the “Rufus moment”: clarify → compare → recommend.
+          </p>
+
+          <div class="ctaWrap">
+            <a class="btn" href="#p4">Yes!</a>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- PAGE 4 (FINAL) -->
+      <section class="page" id="page4">
+        <p class="hint">The “assistant reveal” — what’s powering this experience?</p>
+        <h1>Meet Rufus!</h1>
+
+        <div class="card">
+          <div class="meetWrap">
+            <p class="hint" style="margin:0;">
+              Amazon’s AI shopping assistant that helps customers compare, understand, and choose faster.
+            </p>
+
+            <div class="iconRow">
+              <div class="logoCard" id="rufusIcon" aria-label="Rufus icon">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mini">
+        </div>
+      </section>
+
+      <div class="footer">
+        <div class="progress" aria-label="progress">
+          <div class="pill p1">1</div>
+          <div class="pill p2">2</div>
+          <div class="pill p3">3</div>
+          <div class="pill p4">4</div>
+        </div>
+        <div class="footNote">Designed by Isabella Marcucci</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
