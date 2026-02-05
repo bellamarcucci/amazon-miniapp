@@ -72,9 +72,6 @@
       letter-spacing: .08em;
       font-size: 12px;
       padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.14);
       white-space: nowrap;
     }
     .smile{
@@ -190,6 +187,21 @@
       font-size: 12px;
     }
 
+    .img-logo{
+      width: 50px;
+      height: 30px;
+      display: inline-block;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    #imgLogo img{
+      width: 100%;
+      height: auto;
+    }
+  
+    
     /* Amazon-like “similar” tag */
     .tag{
       position:absolute;
@@ -407,10 +419,10 @@
 
     #imgA { background-image: url("assets/product-a.jpg"); }
     #imgB { background-image: url("assets/product-b.jpg"); }
+    #imgLogo { background-image: url("assets/amazon-logo.png"); }
     #blanket { background-image: url("assets/blanket.jpg"); }
     #headphones { background-image: url("assets/headphones.jpg"); }
 
-    #amazonLogo { background-image: url("assets/amazon-logo.jpg"); }
 
     @keyframes fade{
       from{ opacity:0; transform: translateY(6px); }
@@ -430,7 +442,7 @@
     <div class="topbar">
       <div class="topLeft">
         <div class="rufusBadge">
-          RUFUS <span class="smile" aria-hidden="true"></span>
+        <div class="img-logo" id="imgLogo" aria-label="Amazon logo"></div>
         </div>
         <div class="subtitle">Tap through the shopping doubts</div>
       </div>
